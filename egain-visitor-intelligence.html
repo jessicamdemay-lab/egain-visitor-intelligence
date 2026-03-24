@@ -292,13 +292,23 @@
         </select>
       </div>
       <div class="filter-group">
-        <label>Key Page Visited</label>
+        <label>Key Signal</label>
         <select class="filter-select" id="filterPage" onchange="applyFilters()">
-          <option value="">Any Page</option>
-          <option value="Pricing">Pricing</option>
-          <option value="Demo">Demo Request</option>
-          <option value="Product">Product Pages</option>
-          <option value="Case Study">Case Studies</option>
+          <option value="">Any Signal</option>
+          <option value="AI ROI Calculator">💰 AI ROI Calculator</option>
+          <option value="Demo Request">🚀 Demo Request</option>
+          <option value="Case Study">📄 Case Studies</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Product Interest</label>
+        <select class="filter-select" id="filterProduct" onchange="applyFilters()">
+          <option value="">All Products</option>
+          <option value="AI Agent">AI Agent</option>
+          <option value="AI Knowledge Hub">AI Knowledge Hub</option>
+          <option value="Composer">Composer</option>
+          <option value="Conversation Hub">Conversation Hub</option>
+          <option value="Analytics Hub">Analytics Hub</option>
         </select>
       </div>
       <div class="filter-group">
@@ -360,26 +370,26 @@
 const COLORS = ['#0057b8','#00a3a3','#7b5ea7','#c05621','#2d9e5f','#c53030','#2b6cb0','#b7791f','#276749','#702459'];
 
 const rawData = [
-  { id:1, company:'Salesforce', domain:'salesforce.com', industry:'Technology', size:'Enterprise', employees:'70,000+', revenue:'$34B', hq:'San Francisco, CA', sessions:8, pageViews:47, lastSeen:'2024-10-21', intentScore:91, returning:true, currentTech:['Zendesk','ServiceNow'], keyPages:['Pricing','Demo Request','Knowledge Management','AI Features'], contacts:[{name:'Maria Chen',title:'VP Customer Experience',email:'m.chen@salesforce.com'},{name:'James Okafor',title:'Head of Digital CX',email:'j.okafor@salesforce.com'}], notes:'Multiple team members visiting. Heavy focus on AI and knowledge management pages. Competitor to eGain in some segments — likely evaluating for internal CX stack.' },
-  { id:2, company:'Anthem Inc.', domain:'anthem.com', industry:'Healthcare', size:'Enterprise', employees:'98,000+', revenue:'$138B', hq:'Indianapolis, IN', sessions:6, pageViews:38, lastSeen:'2024-10-20', intentScore:88, returning:true, currentTech:['Genesys','Oracle Service Cloud'], keyPages:['Healthcare Solutions','Pricing','Case Study: BlueCross','Demo Request'], contacts:[{name:'Priya Nair',title:'Director, Member Experience',email:'p.nair@anthem.com'}], notes:'Consistent visits over 3 weeks. Deep engagement with healthcare case studies and pricing. Strong buying signal — demo request page hit twice.' },
-  { id:3, company:'Wells Fargo', domain:'wellsfargo.com', industry:'Financial Services', size:'Enterprise', employees:'240,000+', revenue:'$82B', hq:'San Francisco, CA', sessions:5, pageViews:29, lastSeen:'2024-10-19', intentScore:79, returning:true, currentTech:['Avaya','Nuance'], keyPages:['Compliance & Regulations','AI Chatbot','Pricing','Integrations'], contacts:[{name:'Derek Walsh',title:'SVP Digital Banking',email:'d.walsh@wellsfargo.com'}], notes:'Focus on compliance content and AI chatbot pages. Financial services vertical is a top eGain segment. Nuance displacement opportunity.' },
-  { id:4, company:'Best Buy', domain:'bestbuy.com', industry:'Retail', size:'Enterprise', employees:'90,000+', revenue:'$46B', hq:'Richfield, MN', sessions:4, pageViews:22, lastSeen:'2024-10-18', intentScore:74, returning:true, currentTech:['Salesforce Service Cloud','Kustomer'], keyPages:['Retail Solutions','AI Advisor','Case Studies','Product Tour'], contacts:[{name:'Susan Park',title:'GM Customer Care',email:'s.park@bestbuy.com'}], notes:'Repeated visits to retail solutions and AI advisor pages. Evaluating against current Salesforce footprint.' },
-  { id:5, company:'United Airlines', domain:'united.com', industry:'Travel & Hospitality', size:'Enterprise', employees:'100,000+', revenue:'$54B', hq:'Chicago, IL', sessions:5, pageViews:31, lastSeen:'2024-10-20', intentScore:82, returning:false, currentTech:['Sprinklr','Verint'], keyPages:['Contact Center AI','Omnichannel','Pricing','Demo Request'], contacts:[{name:'Carlos Rivera',title:'Director CX Transformation',email:'c.rivera@united.com'}], notes:'First-time visitor with very high engagement depth. Hit demo request on first visit — high urgency signal. Travel vertical case study would be compelling.' },
-  { id:6, company:'Humana', domain:'humana.com', industry:'Healthcare', size:'Enterprise', employees:'67,000+', revenue:'$92B', hq:'Louisville, KY', sessions:3, pageViews:18, lastSeen:'2024-10-17', intentScore:65, returning:true, currentTech:['NICE inContact'], keyPages:['Healthcare Solutions','Compliance','AI Features'], contacts:[{name:'Angela Torres',title:'VP Member Services',email:'a.torres@humana.com'}], notes:'Consistent but lower-velocity engagement. Healthcare vertical fit. NICE displacement opportunity.' },
-  { id:7, company:'T-Mobile US', domain:'t-mobile.com', industry:'Telecommunications', size:'Enterprise', employees:'75,000+', revenue:'$79B', hq:'Bellevue, WA', sessions:4, pageViews:24, lastSeen:'2024-10-16', intentScore:70, returning:true, currentTech:['Salesforce','Medallia'], keyPages:['Telecom Solutions','Knowledge Management','Integrations','Pricing'], contacts:[{name:'Ryan Kim',title:'Director Digital Care',email:'r.kim@t-mobile.com'}], notes:'Strong interest in knowledge management and Salesforce integration pages — likely evaluating KM layer on top of existing stack.' },
-  { id:8, company:'Cigna', domain:'cigna.com', industry:'Healthcare', size:'Enterprise', employees:'73,000+', revenue:'$180B', hq:'Bloomfield, CT', sessions:2, pageViews:11, lastSeen:'2024-10-15', intentScore:48, returning:false, currentTech:['Genesys'], keyPages:['About eGain','Healthcare Solutions'], contacts:[], notes:'Early-stage browse. Not yet showing high intent. Worth monitoring — healthcare vertical fit is strong.' },
-  { id:9, company:'Progressive Insurance', domain:'progressive.com', industry:'Insurance', size:'Enterprise', employees:'49,000+', revenue:'$57B', hq:'Mayfield Village, OH', sessions:3, pageViews:20, lastSeen:'2024-10-19', intentScore:67, returning:true, currentTech:['Pegasystems'], keyPages:['Insurance Solutions','AI Chatbot','Case Study: Liberty Mutual','Pricing'], contacts:[{name:'Kim Nguyen',title:'Head of Digital Claims',email:'k.nguyen@progressive.com'}], notes:'Insurance peer case study engagement is a strong signal. Pega displacement opportunity worth pursuing.' },
-  { id:10, company:'Nordstrom', domain:'nordstrom.com', industry:'Retail', size:'Enterprise', employees:'71,000+', revenue:'$15B', hq:'Seattle, WA', sessions:2, pageViews:13, lastSeen:'2024-10-14', intentScore:42, returning:false, currentTech:['Zendesk'], keyPages:['Retail Solutions','About eGain','Product Tour'], contacts:[], notes:'Light engagement, top-of-funnel. Zendesk displacement potential.' },
-  { id:11, company:'CVS Health', domain:'cvs.com', industry:'Healthcare', size:'Enterprise', employees:'300,000+', revenue:'$357B', hq:'Woonsocket, RI', sessions:6, pageViews:41, lastSeen:'2024-10-21', intentScore:86, returning:true, currentTech:['Avaya','Oracle'], keyPages:['Healthcare','Pharmacy Solutions','AI Advisor','Pricing','Demo Request'], contacts:[{name:'Lisa Grant',title:'SVP Member Experience',email:'l.grant@cvs.com'}], notes:'Largest employer in dataset. Pharmacy-specific content engagement unique to this account. High volume visits with pricing and demo focus.' },
-  { id:12, company:'Fidelity Investments', domain:'fidelity.com', industry:'Financial Services', size:'Enterprise', employees:'60,000+', revenue:'$24B', hq:'Boston, MA', sessions:4, pageViews:26, lastSeen:'2024-10-18', intentScore:73, returning:true, currentTech:['Nuance','IBM Watson'], keyPages:['Financial Services','Knowledge Management','AI Chatbot','Compliance'], contacts:[{name:'Andrew Lee',title:'Director Digital Wealth',email:'a.lee@fidelity.com'}], notes:'IBM Watson and Nuance displacement opportunity. Strong KM and compliance interest aligns with eGain strengths.' },
-  { id:13, company:'Verizon', domain:'verizon.com', industry:'Telecommunications', size:'Enterprise', employees:'105,000+', revenue:'$134B', hq:'Basking Ridge, NJ', sessions:3, pageViews:17, lastSeen:'2024-10-13', intentScore:55, returning:false, currentTech:['NICE','Salesforce'], keyPages:['Telecom Solutions','Omnichannel','About eGain'], contacts:[], notes:'Light early engagement. NICE and Salesforce incumbent — complex displacement but big opportunity.' },
-  { id:14, company:'DoorDash', domain:'doordash.com', industry:'Technology', size:'Mid-Market', employees:'8,600', revenue:'$8.6B', hq:'San Francisco, CA', sessions:2, pageViews:9, lastSeen:'2024-10-12', intentScore:38, returning:false, currentTech:['Zendesk','Intercom'], keyPages:['Product Tour','About eGain'], contacts:[], notes:'Low intent, early browse. Rapid growth profile — could be a future prospect as CX complexity increases.' },
-  { id:15, company:'New York Life', domain:'newyorklife.com', industry:'Insurance', size:'Enterprise', employees:'14,000+', revenue:'$18B', hq:'New York, NY', sessions:4, pageViews:28, lastSeen:'2024-10-20', intentScore:77, returning:true, currentTech:['Pegasystems','Genesys'], keyPages:['Insurance Solutions','Knowledge Management','Case Study: Liberty Mutual','Pricing'], contacts:[{name:'Thomas Bell',title:'AVP Agent Experience',email:'t.bell@newyorklife.com'}], notes:'Agent experience focus is a differentiated signal — likely exploring KM for agent assist. Strong eGain fit.' },
-  { id:16, company:'American Express', domain:'americanexpress.com', industry:'Financial Services', size:'Enterprise', employees:'64,000+', revenue:'$60B', hq:'New York, NY', sessions:5, pageViews:33, lastSeen:'2024-10-21', intentScore:84, returning:true, currentTech:['Salesforce','Verint'], keyPages:['Financial Services','AI Advisor','Knowledge Management','Pricing','Integrations'], contacts:[{name:'Rachel Stone',title:'Director CX Innovation',email:'r.stone@amex.com'}], notes:'Salesforce integration page highly engaged — evaluating KM/AI layer on top of SFDC. Premium vertical, high ACV potential.' },
-  { id:17, company:'Allstate', domain:'allstate.com', industry:'Insurance', size:'Enterprise', employees:'54,000+', revenue:'$53B', hq:'Northbrook, IL', sessions:3, pageViews:19, lastSeen:'2024-10-16', intentScore:61, returning:true, currentTech:['NICE inContact','Verint'], keyPages:['Insurance Solutions','Compliance','AI Chatbot'], contacts:[], notes:'Compliance and AI chatbot focus. Insurance vertical fit. Mid-tier intent.' },
-  { id:18, company:'Wayfair', domain:'wayfair.com', industry:'Retail', size:'Mid-Market', employees:'16,000', revenue:'$12B', hq:'Boston, MA', sessions:2, pageViews:10, lastSeen:'2024-10-11', intentScore:35, returning:false, currentTech:['Zendesk'], keyPages:['Retail Solutions','About eGain'], contacts:[], notes:'Minimal engagement. Low priority for outreach now.' },
-  { id:19, company:'Centene Corporation', domain:'centene.com', industry:'Healthcare', size:'Enterprise', employees:'74,000+', revenue:'$154B', hq:'St. Louis, MO', sessions:4, pageViews:23, lastSeen:'2024-10-17', intentScore:69, returning:true, currentTech:['Genesys','Salesforce'], keyPages:['Healthcare Solutions','Medicaid','Compliance','Knowledge Management'], contacts:[{name:'Sarah Diaz',title:'Director Member Operations',email:'s.diaz@centene.com'}], notes:'Medicaid-specific content engagement is unique and high-signal. Healthcare compliance + KM focus aligns well.' },
-  { id:20, company:'Charter Communications', domain:'charter.com', industry:'Telecommunications', size:'Enterprise', employees:'101,000+', revenue:'$54B', hq:'Stamford, CT', sessions:3, pageViews:16, lastSeen:'2024-10-15', intentScore:53, returning:false, currentTech:['NICE','Oracle'], keyPages:['Telecom Solutions','Omnichannel','Product Tour'], contacts:[], notes:'Oracle and NICE displacement opportunity. Low-to-mid intent currently.' },
+  { id:1, company:'Salesforce', domain:'salesforce.com', industry:'Technology', size:'Enterprise', employees:'70,000+', revenue:'$34B', hq:'San Francisco, CA', sessions:8, pageViews:47, lastSeen:'2024-10-21', intentScore:91, returning:true, currentTech:['Zendesk','ServiceNow'], keyPages:['AI ROI Calculator','Demo Request','AI Knowledge Hub','AI Agent'], products:['AI Agent','AI Knowledge Hub'], contacts:[{name:'Maria Chen',title:'VP Customer Experience',email:'m.chen@salesforce.com'},{name:'James Okafor',title:'Head of Digital CX',email:'j.okafor@salesforce.com'}], notes:'Multiple team members visiting. Heavy focus on AI Agent and Knowledge Hub pages. Competitor to eGain in some segments — likely evaluating for internal CX stack.' },
+  { id:2, company:'Anthem Inc.', domain:'anthem.com', industry:'Healthcare', size:'Enterprise', employees:'98,000+', revenue:'$138B', hq:'Indianapolis, IN', sessions:6, pageViews:38, lastSeen:'2024-10-20', intentScore:88, returning:true, currentTech:['Genesys','Oracle Service Cloud'], keyPages:['Healthcare Solutions','AI ROI Calculator','Case Study: BlueCross','Demo Request'], products:['AI Agent','Conversation Hub'], contacts:[{name:'Priya Nair',title:'Director, Member Experience',email:'p.nair@anthem.com'}], notes:'Consistent visits over 3 weeks. Deep engagement with healthcare case studies and ROI calculator. Strong buying signal — demo request hit twice.' },
+  { id:3, company:'Wells Fargo', domain:'wellsfargo.com', industry:'Financial Services', size:'Enterprise', employees:'240,000+', revenue:'$82B', hq:'San Francisco, CA', sessions:5, pageViews:29, lastSeen:'2024-10-19', intentScore:79, returning:true, currentTech:['Avaya','Nuance'], keyPages:['Compliance & Regulations','Conversation Hub','AI ROI Calculator','Integrations'], products:['Conversation Hub','Analytics Hub'], contacts:[{name:'Derek Walsh',title:'SVP Digital Banking',email:'d.walsh@wellsfargo.com'}], notes:'Focus on compliance content and Conversation Hub pages. Financial services vertical is a top eGain segment. Nuance displacement opportunity.' },
+  { id:4, company:'Best Buy', domain:'bestbuy.com', industry:'Retail', size:'Enterprise', employees:'90,000+', revenue:'$46B', hq:'Richfield, MN', sessions:4, pageViews:22, lastSeen:'2024-10-18', intentScore:74, returning:true, currentTech:['Salesforce Service Cloud','Kustomer'], keyPages:['Retail Solutions','AI Agent','Case Studies','Composer'], products:['AI Agent','Composer'], contacts:[{name:'Susan Park',title:'GM Customer Care',email:'s.park@bestbuy.com'}], notes:'Repeated visits to AI Agent and Composer pages. Evaluating against current Salesforce footprint — strong displacement opportunity.' },
+  { id:5, company:'United Airlines', domain:'united.com', industry:'Travel & Hospitality', size:'Enterprise', employees:'100,000+', revenue:'$54B', hq:'Chicago, IL', sessions:5, pageViews:31, lastSeen:'2024-10-20', intentScore:82, returning:false, currentTech:['Sprinklr','Verint'], keyPages:['Conversation Hub','AI ROI Calculator','Analytics Hub','Demo Request'], products:['Conversation Hub','Analytics Hub'], contacts:[{name:'Carlos Rivera',title:'Director CX Transformation',email:'c.rivera@united.com'}], notes:'First-time visitor with very high engagement depth. Hit demo request on first visit — high urgency signal. Travel vertical case study would be compelling.' },
+  { id:6, company:'Humana', domain:'humana.com', industry:'Healthcare', size:'Enterprise', employees:'67,000+', revenue:'$92B', hq:'Louisville, KY', sessions:3, pageViews:18, lastSeen:'2024-10-17', intentScore:65, returning:true, currentTech:['NICE inContact'], keyPages:['Healthcare Solutions','Compliance','AI Knowledge Hub'], products:['AI Knowledge Hub'], contacts:[{name:'Angela Torres',title:'VP Member Services',email:'a.torres@humana.com'}], notes:'Consistent but lower-velocity engagement. AI Knowledge Hub interest aligns with member services use case. NICE displacement opportunity.' },
+  { id:7, company:'T-Mobile US', domain:'t-mobile.com', industry:'Telecommunications', size:'Enterprise', employees:'75,000+', revenue:'$79B', hq:'Bellevue, WA', sessions:4, pageViews:24, lastSeen:'2024-10-16', intentScore:70, returning:true, currentTech:['Salesforce','Medallia'], keyPages:['Telecom Solutions','AI Knowledge Hub','Integrations','AI ROI Calculator'], products:['AI Knowledge Hub','Conversation Hub'], contacts:[{name:'Ryan Kim',title:'Director Digital Care',email:'r.kim@t-mobile.com'}], notes:'Strong interest in AI Knowledge Hub and Salesforce integration pages — likely evaluating KM layer on top of existing stack.' },
+  { id:8, company:'Cigna', domain:'cigna.com', industry:'Healthcare', size:'Enterprise', employees:'73,000+', revenue:'$180B', hq:'Bloomfield, CT', sessions:2, pageViews:11, lastSeen:'2024-10-15', intentScore:48, returning:false, currentTech:['Genesys'], keyPages:['About eGain','Healthcare Solutions'], products:['AI Agent'], contacts:[], notes:'Early-stage browse. Not yet showing high intent. Worth monitoring — healthcare vertical fit is strong.' },
+  { id:9, company:'Progressive Insurance', domain:'progressive.com', industry:'Insurance', size:'Enterprise', employees:'49,000+', revenue:'$57B', hq:'Mayfield Village, OH', sessions:3, pageViews:20, lastSeen:'2024-10-19', intentScore:67, returning:true, currentTech:['Pegasystems'], keyPages:['Insurance Solutions','AI Agent','Case Study: Liberty Mutual','AI ROI Calculator'], products:['AI Agent','Analytics Hub'], contacts:[{name:'Kim Nguyen',title:'Head of Digital Claims',email:'k.nguyen@progressive.com'}], notes:'Insurance peer case study engagement is a strong signal. AI Agent and Analytics Hub interest. Pega displacement opportunity worth pursuing.' },
+  { id:10, company:'Nordstrom', domain:'nordstrom.com', industry:'Retail', size:'Enterprise', employees:'71,000+', revenue:'$15B', hq:'Seattle, WA', sessions:2, pageViews:13, lastSeen:'2024-10-14', intentScore:42, returning:false, currentTech:['Zendesk'], keyPages:['Retail Solutions','About eGain','Composer'], products:['Composer'], contacts:[], notes:'Light engagement, top-of-funnel. Zendesk displacement potential. Composer page suggests content automation interest.' },
+  { id:11, company:'CVS Health', domain:'cvs.com', industry:'Healthcare', size:'Enterprise', employees:'300,000+', revenue:'$357B', hq:'Woonsocket, RI', sessions:6, pageViews:41, lastSeen:'2024-10-21', intentScore:86, returning:true, currentTech:['Avaya','Oracle'], keyPages:['Healthcare','AI Knowledge Hub','AI ROI Calculator','Demo Request'], products:['AI Knowledge Hub','AI Agent'], contacts:[{name:'Lisa Grant',title:'SVP Member Experience',email:'l.grant@cvs.com'}], notes:'Largest employer in dataset. AI Knowledge Hub and ROI calculator engagement are high-signal. Demo request confirms active evaluation.' },
+  { id:12, company:'Fidelity Investments', domain:'fidelity.com', industry:'Financial Services', size:'Enterprise', employees:'60,000+', revenue:'$24B', hq:'Boston, MA', sessions:4, pageViews:26, lastSeen:'2024-10-18', intentScore:73, returning:true, currentTech:['Nuance','IBM Watson'], keyPages:['Financial Services','AI Knowledge Hub','Conversation Hub','Compliance'], products:['AI Knowledge Hub','Conversation Hub'], contacts:[{name:'Andrew Lee',title:'Director Digital Wealth',email:'a.lee@fidelity.com'}], notes:'IBM Watson and Nuance displacement opportunity. Strong AI Knowledge Hub and Conversation Hub interest aligns with eGain strengths.' },
+  { id:13, company:'Verizon', domain:'verizon.com', industry:'Telecommunications', size:'Enterprise', employees:'105,000+', revenue:'$134B', hq:'Basking Ridge, NJ', sessions:3, pageViews:17, lastSeen:'2024-10-13', intentScore:55, returning:false, currentTech:['NICE','Salesforce'], keyPages:['Telecom Solutions','Conversation Hub','About eGain'], products:['Conversation Hub'], contacts:[], notes:'Light early engagement. NICE and Salesforce incumbent — complex displacement but big opportunity.' },
+  { id:14, company:'DoorDash', domain:'doordash.com', industry:'Technology', size:'Mid-Market', employees:'8,600', revenue:'$8.6B', hq:'San Francisco, CA', sessions:2, pageViews:9, lastSeen:'2024-10-12', intentScore:38, returning:false, currentTech:['Zendesk','Intercom'], keyPages:['AI Agent','About eGain'], products:['AI Agent'], contacts:[], notes:'Low intent, early browse. Rapid growth profile — could be a future prospect as CX complexity increases.' },
+  { id:15, company:'New York Life', domain:'newyorklife.com', industry:'Insurance', size:'Enterprise', employees:'14,000+', revenue:'$18B', hq:'New York, NY', sessions:4, pageViews:28, lastSeen:'2024-10-20', intentScore:77, returning:true, currentTech:['Pegasystems','Genesys'], keyPages:['Insurance Solutions','AI Knowledge Hub','Case Study: Liberty Mutual','AI ROI Calculator'], products:['AI Knowledge Hub','Composer'], contacts:[{name:'Thomas Bell',title:'AVP Agent Experience',email:'t.bell@newyorklife.com'}], notes:'Agent experience focus — likely exploring AI Knowledge Hub for agent assist. Composer interest suggests content workflow evaluation. Strong eGain fit.' },
+  { id:16, company:'American Express', domain:'americanexpress.com', industry:'Financial Services', size:'Enterprise', employees:'64,000+', revenue:'$60B', hq:'New York, NY', sessions:5, pageViews:33, lastSeen:'2024-10-21', intentScore:84, returning:true, currentTech:['Salesforce','Verint'], keyPages:['Financial Services','AI Agent','AI Knowledge Hub','AI ROI Calculator','Integrations'], products:['AI Agent','AI Knowledge Hub','Analytics Hub'], contacts:[{name:'Rachel Stone',title:'Director CX Innovation',email:'r.stone@amex.com'}], notes:'Broad product interest across AI Agent, Knowledge Hub, and Analytics. Salesforce integration page highly engaged — evaluating full stack. Premium vertical, high ACV potential.' },
+  { id:17, company:'Allstate', domain:'allstate.com', industry:'Insurance', size:'Enterprise', employees:'54,000+', revenue:'$53B', hq:'Northbrook, IL', sessions:3, pageViews:19, lastSeen:'2024-10-16', intentScore:61, returning:true, currentTech:['NICE inContact','Verint'], keyPages:['Insurance Solutions','Compliance','Conversation Hub'], products:['Conversation Hub','Analytics Hub'], contacts:[], notes:'Compliance and Conversation Hub focus. Analytics Hub page suggests reporting interest. Insurance vertical fit. Mid-tier intent.' },
+  { id:18, company:'Wayfair', domain:'wayfair.com', industry:'Retail', size:'Mid-Market', employees:'16,000', revenue:'$12B', hq:'Boston, MA', sessions:2, pageViews:10, lastSeen:'2024-10-11', intentScore:35, returning:false, currentTech:['Zendesk'], keyPages:['Retail Solutions','About eGain'], products:['AI Agent'], contacts:[], notes:'Minimal engagement. Low priority for outreach now.' },
+  { id:19, company:'Centene Corporation', domain:'centene.com', industry:'Healthcare', size:'Enterprise', employees:'74,000+', revenue:'$154B', hq:'St. Louis, MO', sessions:4, pageViews:23, lastSeen:'2024-10-17', intentScore:69, returning:true, currentTech:['Genesys','Salesforce'], keyPages:['Healthcare Solutions','Medicaid','Compliance','AI Knowledge Hub'], products:['AI Knowledge Hub','Analytics Hub'], contacts:[{name:'Sarah Diaz',title:'Director Member Operations',email:'s.diaz@centene.com'}], notes:'Medicaid-specific content engagement is unique and high-signal. AI Knowledge Hub and Analytics Hub focus aligns with compliance and reporting needs.' },
+  { id:20, company:'Charter Communications', domain:'charter.com', industry:'Telecommunications', size:'Enterprise', employees:'101,000+', revenue:'$54B', hq:'Stamford, CT', sessions:3, pageViews:16, lastSeen:'2024-10-15', intentScore:53, returning:false, currentTech:['NICE','Oracle'], keyPages:['Telecom Solutions','Conversation Hub','Composer'], products:['Conversation Hub','Composer'], contacts:[], notes:'Oracle and NICE displacement opportunity. Conversation Hub and Composer interest suggests omnichannel and content workflow evaluation.' },
 ];
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
@@ -411,6 +421,7 @@ function applyFilters() {
   const industry = document.getElementById('filterIndustry').value;
   const size = document.getElementById('filterSize').value;
   const page = document.getElementById('filterPage').value;
+  const product = document.getElementById('filterProduct').value;
   const returning = document.getElementById('filterReturning').value;
 
   filtered = rawData.filter(d => {
@@ -421,6 +432,7 @@ function applyFilters() {
     if (industry && d.industry !== industry) return false;
     if (size && d.size !== size) return false;
     if (page && !d.keyPages.some(p => p.includes(page))) return false;
+    if (product && !(d.products || []).includes(product)) return false;
     if (returning === 'yes' && !d.returning) return false;
     if (returning === 'no' && d.returning) return false;
     return true;
@@ -437,6 +449,7 @@ function resetFilters() {
   document.getElementById('filterIndustry').value = '';
   document.getElementById('filterSize').value = '';
   document.getElementById('filterPage').value = '';
+  document.getElementById('filterProduct').value = '';
   document.getElementById('filterReturning').value = '';
   applyFilters();
 }
@@ -462,13 +475,13 @@ function renderStats() {
   const hot = filtered.filter(d => d.intentScore >= 75).length;
   const avg = filtered.length ? Math.round(filtered.reduce((a,d) => a+d.intentScore, 0)/filtered.length) : 0;
   const withDemo = filtered.filter(d => d.keyPages.some(p => p.includes('Demo'))).length;
-  const withPricing = filtered.filter(d => d.keyPages.some(p => p.includes('Pricing'))).length;
+  const withROI = filtered.filter(d => d.keyPages.some(p => p.includes('AI ROI Calculator'))).length;
   document.getElementById('statsBar').innerHTML = `
     <div class="stat-card"><div class="stat-label">Total Accounts</div><div class="stat-value stat-accent">${filtered.length}</div><div class="stat-sub">of ${rawData.length} total visitors</div></div>
     <div class="stat-card"><div class="stat-label">🔥 Hot Accounts</div><div class="stat-value stat-red">${hot}</div><div class="stat-sub">Intent score 75+</div></div>
     <div class="stat-card"><div class="stat-label">Avg Intent Score</div><div class="stat-value stat-accent">${avg}</div><div class="stat-sub">Across filtered set</div></div>
     <div class="stat-card"><div class="stat-label">Demo Requests</div><div class="stat-value stat-green">${withDemo}</div><div class="stat-sub">Hit demo page</div></div>
-    <div class="stat-card"><div class="stat-label">Pricing Visitors</div><div class="stat-value">${withPricing}</div><div class="stat-sub">Viewed pricing</div></div>
+    <div class="stat-card"><div class="stat-label">ROI Calculator</div><div class="stat-value">${withROI}</div><div class="stat-sub">Used ROI tool</div></div>
   `;
 }
 
@@ -504,7 +517,7 @@ function renderTable() {
     const initials = getInitials(d.company);
     const signals = [];
     if (d.keyPages.some(p => p.includes('Demo'))) signals.push('<span class="pill pill-hot">Demo</span>');
-    if (d.keyPages.some(p => p.includes('Pricing'))) signals.push('<span class="pill pill-warm">Pricing</span>');
+    if (d.keyPages.some(p => p.includes('AI ROI Calculator'))) signals.push('<span class="pill pill-warm">ROI Calc</span>');
     if (d.keyPages.some(p => p.includes('Case Study'))) signals.push('<span class="pill pill-green">Case Study</span>');
     if (d.returning) signals.push('<span class="pill pill-gray">Returning</span>');
 
@@ -548,8 +561,8 @@ function selectRow(id) {
     ? `<div class="insight-item"><div class="insight-icon">🚀</div><div class="insight-text"><strong>Demo page visited</strong> — high urgency signal. Prioritize outreach within 24–48 hours.</div></div>`
     : '';
 
-  const pricingSignal = d.keyPages.some(p=>p.includes('Pricing'))
-    ? `<div class="insight-item"><div class="insight-icon">💰</div><div class="insight-text"><strong>Pricing page visited</strong> — prospect is evaluating cost. Prepare ROI framing and competitive pricing context.</div></div>`
+  const roiSignal = d.keyPages.some(p=>p.includes('AI ROI Calculator'))
+    ? `<div class="insight-item"><div class="insight-icon">💰</div><div class="insight-text"><strong>AI ROI Calculator used</strong> — prospect is actively building a business case. Come prepared with cost-savings data and customer benchmarks.</div></div>`
     : '';
 
   const returningSignal = d.returning
@@ -607,6 +620,7 @@ function selectRow(id) {
           <div class="detail-kv"><div class="detail-kv-label">Last Seen</div><div class="detail-kv-val">${formatDate(d.lastSeen)}</div></div>
           <div class="detail-kv"><div class="detail-kv-label">Intent Score</div><div class="detail-kv-val">${d.intentScore}/100</div></div>
           <div class="detail-kv" style="grid-column:span 2"><div class="detail-kv-label">Key Pages</div><div style="margin-top:6px;display:flex;flex-wrap:wrap">${pagesHtml}</div></div>
+          <div class="detail-kv" style="grid-column:span 2"><div class="detail-kv-label">Product Interest</div><div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">${(d.products||[]).map(p=>`<span class="pill pill-industry">${p}</span>`).join('')}</div></div>
         </div>
       </div>
       <div>
@@ -616,7 +630,7 @@ function selectRow(id) {
       <div>
         <div class="detail-section-title">Sales Intelligence</div>
         <div class="insight-list">
-          ${demoSignal}${pricingSignal}${returningSignal}${competitorInsight}
+          ${demoSignal}${roiSignal}${returningSignal}${competitorInsight}
           <div class="insight-item"><div class="insight-icon">💡</div><div class="insight-text">${d.notes}</div></div>
         </div>
       </div>
