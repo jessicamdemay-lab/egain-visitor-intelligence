@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>eGain Visitor Intelligence | Sales Rep Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f4f6f9;
+    --surface: #ffffff;
+    --surface2: #f9fafc;
+    --border: #e4e8ef;
+    --border2: #d0d7e3;
+    --text: #1a2035;
+    --text2: #4a5568;
+    --text3: #8896aa;
+    --accent: #0057b8;
+    --accent-light: #e8f0fb;
+    --accent2: #00a3a3;
+    --red: #e53e3e;
+    --red-light: #fff5f5;
+    --green: #2d9e5f;
+    --green-light: #f0faf5;
+    --yellow: #c77c00;
+    --yellow-light: #fffbeb;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: var(--accent); letter-spacing: -0.3px; }
+  .logo-icon { width: 30px; height: 30px; background: var(--accent); border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon svg { width: 18px; height: 18px; fill: white; }
+  .logo-sub { font-size: 11px; color: var(--text3); font-weight: 400; background: var(--accent-light); color: var(--accent); padding: 2px 8px; border-radius: 20px; letter-spacing: 0.3px; }
+  .header-right { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text2); }
+  .badge-live { display: flex; align-items: center; gap: 5px; background: var(--green-light); color: var(--green); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+  .badge-live::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* LAYOUT */
+  .layout { display: flex; min-height: calc(100vh - 60px); }
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    position: sticky;
+    top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+  .main { flex: 1; padding: 28px 32px; overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar-section { padding: 0 16px 16px; }
+  .sidebar-label { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; padding: 0 4px; }
+  .sidebar-search {
+    width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; background: var(--bg); color: var(--text);
+    outline: none; transition: border 0.15s;
+  }
+  .sidebar-search:focus { border-color: var(--accent); background: white; }
+  .filter-group { margin-bottom: 16px; }
+  .filter-group label { display: block; font-size: 12px; color: var(--text2); font-weight: 500; margin-bottom: 6px; padding: 0 4px; }
+  .filter-select {
+    width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; background: var(--surface); color: var(--text);
+    outline: none; cursor: pointer; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238896aa' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+  .filter-select:focus { border-color: var(--accent); }
+  .btn-reset {
+    width: 100%; padding: 8px; border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text2); background: var(--surface);
+    cursor: pointer; font-weight: 500; transition: all 0.15s;
+  }
+  .btn-reset:hover { background: var(--bg); color: var(--text); }
+  .sidebar-divider { height: 1px; background: var(--border); margin: 8px 16px 16px; }
+
+  /* STATS BAR */
+  .stats-bar { display: flex; gap: 16px; margin-bottom: 24px; }
+  .stat-card {
+    flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 18px; box-shadow: var(--shadow);
+  }
+  .stat-label { font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .stat-value { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; }
+  .stat-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
+  .stat-accent { color: var(--accent); }
+  .stat-green { color: var(--green); }
+  .stat-red { color: var(--red); }
+
+  /* TABLE */
+  .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .table-title { font-size: 15px; font-weight: 600; }
+  .table-count { font-size: 13px; color: var(--text3); }
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: var(--surface2); border-bottom: 1px solid var(--border); }
+  th {
+    padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600;
+    color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase;
+    cursor: pointer; white-space: nowrap; user-select: none;
+  }
+  th:hover { color: var(--accent); }
+  th .sort-arrow { margin-left: 4px; opacity: 0.4; }
+  th.sorted .sort-arrow { opacity: 1; color: var(--accent); }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr.data-row { cursor: pointer; transition: background 0.1s; }
+  tr.data-row:hover { background: var(--accent-light); }
+  tr.data-row.selected { background: var(--accent-light); }
+
+  /* PILLS / BADGES */
+  .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap;
+  }
+  .pill-hot { background: #fff0f0; color: var(--red); }
+  .pill-warm { background: var(--yellow-light); color: var(--yellow); }
+  .pill-cold { background: #f0f4ff; color: #4a6cf7; }
+  .pill-industry { background: var(--accent-light); color: var(--accent); }
+  .pill-green { background: var(--green-light); color: var(--green); }
+  .pill-gray { background: var(--bg); color: var(--text3); border: 1px solid var(--border); }
+
+  /* INTENT BAR */
+  .intent-wrap { display: flex; align-items: center; gap: 8px; }
+  .intent-bar-bg { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .intent-bar-fill { height: 100%; border-radius: 3px; }
+  .intent-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); min-width: 26px; text-align: right; }
+
+  /* COMPANY CELL */
+  .company-cell { display: flex; align-items: center; gap: 10px; }
+  .company-logo {
+    width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .company-name { font-weight: 600; font-size: 13px; }
+  .company-domain { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; }
+
+  /* DETAIL PANEL */
+  .detail-panel {
+    position: fixed; right: 0; top: 60px; bottom: 0; width: 420px;
+    background: var(--surface); border-left: 1px solid var(--border);
+    box-shadow: -4px 0 20px rgba(0,0,0,0.08);
+    overflow-y: auto; z-index: 90;
+    transform: translateX(100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+  }
+  .detail-panel.open { transform: translateX(0); }
+  .detail-close {
+    position: absolute; top: 16px; right: 16px; width: 28px; height: 28px;
+    border-radius: 50%; background: var(--bg); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    font-size: 14px; color: var(--text3); transition: all 0.15s;
+  }
+  .detail-close:hover { background: var(--border); color: var(--text); }
+  .detail-header { padding: 24px 24px 16px; border-bottom: 1px solid var(--border); }
+  .detail-company-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .detail-logo { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+  .detail-company-name { font-size: 18px; font-weight: 700; }
+  .detail-domain { font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .detail-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+  .detail-section-title { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .detail-kv { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
+  .detail-kv-label { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
+  .detail-kv-val { font-size: 13px; font-weight: 600; color: var(--text); }
+  .detail-sessions { display: flex; flex-direction: column; gap: 8px; }
+  .session-row {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 10px 12px; display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .session-pages { font-size: 12px; font-weight: 500; color: var(--text); }
+  .session-time { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; }
+  .session-date { font-size: 11px; color: var(--text3); }
+  .insight-list { display: flex; flex-direction: column; gap: 8px; }
+  .insight-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+  .insight-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .insight-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .insight-text strong { color: var(--text); }
+  .cta-box { background: var(--accent); border-radius: var(--radius); padding: 16px 18px; color: white; }
+  .cta-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .cta-text { font-size: 12px; opacity: 0.85; line-height: 1.5; }
+  .btn-cta {
+    margin-top: 12px; width: 100%; padding: 9px; background: white; color: var(--accent);
+    border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+  }
+  .btn-cta:hover { background: var(--accent-light); }
+
+  /* EMPTY */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
+  .empty-state .icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* FOOTER */
+  .footer { padding: 16px 32px; font-size: 11px; color: var(--text3); border-top: 1px solid var(--border); background: var(--surface); text-align: center; }
+
+  /* OVERLAY */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); z-index: 89; }
+  .overlay.active { display: block; }
+
+  /* RESPONSIVE ADJUST */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .stats-bar { flex-wrap: wrap; }
+    .detail-panel { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+      </div>
+      eGain Visitor Intelligence
+    </div>
+    <span class="logo-sub">Sales Rep Portal</span>
+  </div>
+  <div class="header-right">
+    <span class="badge-live">Live Demo</span>
+    <span style="color:var(--text3)">Data: Oct 1 – Oct 21, 2024</span>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Search</div>
+      <input class="sidebar-search" type="text" id="searchInput" placeholder="Company, domain, contact…" oninput="applyFilters()"/>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Filters</div>
+      <div class="filter-group">
+        <label>Intent Score</label>
+        <select class="filter-select" id="filterIntent" onchange="applyFilters()">
+          <option value="">All</option>
+          <option value="hot">🔥 Hot (75+)</option>
+          <option value="warm">⚡ Warm (40–74)</option>
+          <option value="cold">❄️ Cold (&lt;40)</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Industry</label>
+        <select class="filter-select" id="filterIndustry" onchange="applyFilters()">
+          <option value="">All Industries</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Company Size</label>
+        <select class="filter-select" id="filterSize" onchange="applyFilters()">
+          <option value="">All Sizes</option>
+          <option value="Enterprise">Enterprise (1000+)</option>
+          <option value="Mid-Market">Mid-Market (200–999)</option>
+          <option value="SMB">SMB (&lt;200)</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Key Page Visited</label>
+        <select class="filter-select" id="filterPage" onchange="applyFilters()">
+          <option value="">Any Page</option>
+          <option value="Pricing">Pricing</option>
+          <option value="Demo">Demo Request</option>
+          <option value="Product">Product Pages</option>
+          <option value="Case Study">Case Studies</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Returning Visitor</label>
+        <select class="filter-select" id="filterReturning" onchange="applyFilters()">
+          <option value="">All</option>
+          <option value="yes">Returning</option>
+          <option value="no">First Visit</option>
+        </select>
+      </div>
+      <button class="btn-reset" onclick="resetFilters()">↺ Reset All Filters</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="mainContent">
+    <!-- STATS -->
+    <div class="stats-bar" id="statsBar"></div>
+
+    <!-- TABLE -->
+    <div class="table-header">
+      <div class="table-title">Visitor Accounts</div>
+      <div class="table-count" id="tableCount"></div>
+    </div>
+    <div class="table-wrap">
+      <table id="visitorTable">
+        <thead>
+          <tr>
+            <th onclick="sortTable('company')">Company <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable('industry')">Industry <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable('size')">Size <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable('sessions')">Sessions <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable('pageViews')">Page Views <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable('lastSeen')">Last Seen <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable('intentScore')">Intent Score <span class="sort-arrow">↕</span></th>
+            <th>Key Signals</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <div class="footer" style="margin-top:24px;border-radius:var(--radius)">
+      ⚠️ Prototype using synthetic visitor data modeled on realistic eGain.com weblog patterns. In production, connect to real log pipeline + IP enrichment (Clearbit, Apollo, 6sense).
+    </div>
+  </main>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+
+<!-- DETAIL PANEL -->
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-close" onclick="closePanel()">✕</div>
+  <div id="detailContent"></div>
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const COLORS = ['#0057b8','#00a3a3','#7b5ea7','#c05621','#2d9e5f','#c53030','#2b6cb0','#b7791f','#276749','#702459'];
+
+const rawData = [
+  { id:1, company:'Salesforce', domain:'salesforce.com', industry:'Technology', size:'Enterprise', employees:'70,000+', revenue:'$34B', hq:'San Francisco, CA', sessions:8, pageViews:47, lastSeen:'2024-10-21', intentScore:91, returning:true, currentTech:['Zendesk','ServiceNow'], keyPages:['Pricing','Demo Request','Knowledge Management','AI Features'], contacts:[{name:'Maria Chen',title:'VP Customer Experience',email:'m.chen@salesforce.com'},{name:'James Okafor',title:'Head of Digital CX',email:'j.okafor@salesforce.com'}], notes:'Multiple team members visiting. Heavy focus on AI and knowledge management pages. Competitor to eGain in some segments — likely evaluating for internal CX stack.' },
+  { id:2, company:'Anthem Inc.', domain:'anthem.com', industry:'Healthcare', size:'Enterprise', employees:'98,000+', revenue:'$138B', hq:'Indianapolis, IN', sessions:6, pageViews:38, lastSeen:'2024-10-20', intentScore:88, returning:true, currentTech:['Genesys','Oracle Service Cloud'], keyPages:['Healthcare Solutions','Pricing','Case Study: BlueCross','Demo Request'], contacts:[{name:'Priya Nair',title:'Director, Member Experience',email:'p.nair@anthem.com'}], notes:'Consistent visits over 3 weeks. Deep engagement with healthcare case studies and pricing. Strong buying signal — demo request page hit twice.' },
+  { id:3, company:'Wells Fargo', domain:'wellsfargo.com', industry:'Financial Services', size:'Enterprise', employees:'240,000+', revenue:'$82B', hq:'San Francisco, CA', sessions:5, pageViews:29, lastSeen:'2024-10-19', intentScore:79, returning:true, currentTech:['Avaya','Nuance'], keyPages:['Compliance & Regulations','AI Chatbot','Pricing','Integrations'], contacts:[{name:'Derek Walsh',title:'SVP Digital Banking',email:'d.walsh@wellsfargo.com'}], notes:'Focus on compliance content and AI chatbot pages. Financial services vertical is a top eGain segment. Nuance displacement opportunity.' },
+  { id:4, company:'Best Buy', domain:'bestbuy.com', industry:'Retail', size:'Enterprise', employees:'90,000+', revenue:'$46B', hq:'Richfield, MN', sessions:4, pageViews:22, lastSeen:'2024-10-18', intentScore:74, returning:true, currentTech:['Salesforce Service Cloud','Kustomer'], keyPages:['Retail Solutions','AI Advisor','Case Studies','Product Tour'], contacts:[{name:'Susan Park',title:'GM Customer Care',email:'s.park@bestbuy.com'}], notes:'Repeated visits to retail solutions and AI advisor pages. Evaluating against current Salesforce footprint.' },
+  { id:5, company:'United Airlines', domain:'united.com', industry:'Travel & Hospitality', size:'Enterprise', employees:'100,000+', revenue:'$54B', hq:'Chicago, IL', sessions:5, pageViews:31, lastSeen:'2024-10-20', intentScore:82, returning:false, currentTech:['Sprinklr','Verint'], keyPages:['Contact Center AI','Omnichannel','Pricing','Demo Request'], contacts:[{name:'Carlos Rivera',title:'Director CX Transformation',email:'c.rivera@united.com'}], notes:'First-time visitor with very high engagement depth. Hit demo request on first visit — high urgency signal. Travel vertical case study would be compelling.' },
+  { id:6, company:'Humana', domain:'humana.com', industry:'Healthcare', size:'Enterprise', employees:'67,000+', revenue:'$92B', hq:'Louisville, KY', sessions:3, pageViews:18, lastSeen:'2024-10-17', intentScore:65, returning:true, currentTech:['NICE inContact'], keyPages:['Healthcare Solutions','Compliance','AI Features'], contacts:[{name:'Angela Torres',title:'VP Member Services',email:'a.torres@humana.com'}], notes:'Consistent but lower-velocity engagement. Healthcare vertical fit. NICE displacement opportunity.' },
+  { id:7, company:'T-Mobile US', domain:'t-mobile.com', industry:'Telecommunications', size:'Enterprise', employees:'75,000+', revenue:'$79B', hq:'Bellevue, WA', sessions:4, pageViews:24, lastSeen:'2024-10-16', intentScore:70, returning:true, currentTech:['Salesforce','Medallia'], keyPages:['Telecom Solutions','Knowledge Management','Integrations','Pricing'], contacts:[{name:'Ryan Kim',title:'Director Digital Care',email:'r.kim@t-mobile.com'}], notes:'Strong interest in knowledge management and Salesforce integration pages — likely evaluating KM layer on top of existing stack.' },
+  { id:8, company:'Cigna', domain:'cigna.com', industry:'Healthcare', size:'Enterprise', employees:'73,000+', revenue:'$180B', hq:'Bloomfield, CT', sessions:2, pageViews:11, lastSeen:'2024-10-15', intentScore:48, returning:false, currentTech:['Genesys'], keyPages:['About eGain','Healthcare Solutions'], contacts:[], notes:'Early-stage browse. Not yet showing high intent. Worth monitoring — healthcare vertical fit is strong.' },
+  { id:9, company:'Progressive Insurance', domain:'progressive.com', industry:'Insurance', size:'Enterprise', employees:'49,000+', revenue:'$57B', hq:'Mayfield Village, OH', sessions:3, pageViews:20, lastSeen:'2024-10-19', intentScore:67, returning:true, currentTech:['Pegasystems'], keyPages:['Insurance Solutions','AI Chatbot','Case Study: Liberty Mutual','Pricing'], contacts:[{name:'Kim Nguyen',title:'Head of Digital Claims',email:'k.nguyen@progressive.com'}], notes:'Insurance peer case study engagement is a strong signal. Pega displacement opportunity worth pursuing.' },
+  { id:10, company:'Nordstrom', domain:'nordstrom.com', industry:'Retail', size:'Enterprise', employees:'71,000+', revenue:'$15B', hq:'Seattle, WA', sessions:2, pageViews:13, lastSeen:'2024-10-14', intentScore:42, returning:false, currentTech:['Zendesk'], keyPages:['Retail Solutions','About eGain','Product Tour'], contacts:[], notes:'Light engagement, top-of-funnel. Zendesk displacement potential.' },
+  { id:11, company:'CVS Health', domain:'cvs.com', industry:'Healthcare', size:'Enterprise', employees:'300,000+', revenue:'$357B', hq:'Woonsocket, RI', sessions:6, pageViews:41, lastSeen:'2024-10-21', intentScore:86, returning:true, currentTech:['Avaya','Oracle'], keyPages:['Healthcare','Pharmacy Solutions','AI Advisor','Pricing','Demo Request'], contacts:[{name:'Lisa Grant',title:'SVP Member Experience',email:'l.grant@cvs.com'}], notes:'Largest employer in dataset. Pharmacy-specific content engagement unique to this account. High volume visits with pricing and demo focus.' },
+  { id:12, company:'Fidelity Investments', domain:'fidelity.com', industry:'Financial Services', size:'Enterprise', employees:'60,000+', revenue:'$24B', hq:'Boston, MA', sessions:4, pageViews:26, lastSeen:'2024-10-18', intentScore:73, returning:true, currentTech:['Nuance','IBM Watson'], keyPages:['Financial Services','Knowledge Management','AI Chatbot','Compliance'], contacts:[{name:'Andrew Lee',title:'Director Digital Wealth',email:'a.lee@fidelity.com'}], notes:'IBM Watson and Nuance displacement opportunity. Strong KM and compliance interest aligns with eGain strengths.' },
+  { id:13, company:'Verizon', domain:'verizon.com', industry:'Telecommunications', size:'Enterprise', employees:'105,000+', revenue:'$134B', hq:'Basking Ridge, NJ', sessions:3, pageViews:17, lastSeen:'2024-10-13', intentScore:55, returning:false, currentTech:['NICE','Salesforce'], keyPages:['Telecom Solutions','Omnichannel','About eGain'], contacts:[], notes:'Light early engagement. NICE and Salesforce incumbent — complex displacement but big opportunity.' },
+  { id:14, company:'DoorDash', domain:'doordash.com', industry:'Technology', size:'Mid-Market', employees:'8,600', revenue:'$8.6B', hq:'San Francisco, CA', sessions:2, pageViews:9, lastSeen:'2024-10-12', intentScore:38, returning:false, currentTech:['Zendesk','Intercom'], keyPages:['Product Tour','About eGain'], contacts:[], notes:'Low intent, early browse. Rapid growth profile — could be a future prospect as CX complexity increases.' },
+  { id:15, company:'New York Life', domain:'newyorklife.com', industry:'Insurance', size:'Enterprise', employees:'14,000+', revenue:'$18B', hq:'New York, NY', sessions:4, pageViews:28, lastSeen:'2024-10-20', intentScore:77, returning:true, currentTech:['Pegasystems','Genesys'], keyPages:['Insurance Solutions','Knowledge Management','Case Study: Liberty Mutual','Pricing'], contacts:[{name:'Thomas Bell',title:'AVP Agent Experience',email:'t.bell@newyorklife.com'}], notes:'Agent experience focus is a differentiated signal — likely exploring KM for agent assist. Strong eGain fit.' },
+  { id:16, company:'American Express', domain:'americanexpress.com', industry:'Financial Services', size:'Enterprise', employees:'64,000+', revenue:'$60B', hq:'New York, NY', sessions:5, pageViews:33, lastSeen:'2024-10-21', intentScore:84, returning:true, currentTech:['Salesforce','Verint'], keyPages:['Financial Services','AI Advisor','Knowledge Management','Pricing','Integrations'], contacts:[{name:'Rachel Stone',title:'Director CX Innovation',email:'r.stone@amex.com'}], notes:'Salesforce integration page highly engaged — evaluating KM/AI layer on top of SFDC. Premium vertical, high ACV potential.' },
+  { id:17, company:'Allstate', domain:'allstate.com', industry:'Insurance', size:'Enterprise', employees:'54,000+', revenue:'$53B', hq:'Northbrook, IL', sessions:3, pageViews:19, lastSeen:'2024-10-16', intentScore:61, returning:true, currentTech:['NICE inContact','Verint'], keyPages:['Insurance Solutions','Compliance','AI Chatbot'], contacts:[], notes:'Compliance and AI chatbot focus. Insurance vertical fit. Mid-tier intent.' },
+  { id:18, company:'Wayfair', domain:'wayfair.com', industry:'Retail', size:'Mid-Market', employees:'16,000', revenue:'$12B', hq:'Boston, MA', sessions:2, pageViews:10, lastSeen:'2024-10-11', intentScore:35, returning:false, currentTech:['Zendesk'], keyPages:['Retail Solutions','About eGain'], contacts:[], notes:'Minimal engagement. Low priority for outreach now.' },
+  { id:19, company:'Centene Corporation', domain:'centene.com', industry:'Healthcare', size:'Enterprise', employees:'74,000+', revenue:'$154B', hq:'St. Louis, MO', sessions:4, pageViews:23, lastSeen:'2024-10-17', intentScore:69, returning:true, currentTech:['Genesys','Salesforce'], keyPages:['Healthcare Solutions','Medicaid','Compliance','Knowledge Management'], contacts:[{name:'Sarah Diaz',title:'Director Member Operations',email:'s.diaz@centene.com'}], notes:'Medicaid-specific content engagement is unique and high-signal. Healthcare compliance + KM focus aligns well.' },
+  { id:20, company:'Charter Communications', domain:'charter.com', industry:'Telecommunications', size:'Enterprise', employees:'101,000+', revenue:'$54B', hq:'Stamford, CT', sessions:3, pageViews:16, lastSeen:'2024-10-15', intentScore:53, returning:false, currentTech:['NICE','Oracle'], keyPages:['Telecom Solutions','Omnichannel','Product Tour'], contacts:[], notes:'Oracle and NICE displacement opportunity. Low-to-mid intent currently.' },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let filtered = [...rawData];
+let sortKey = 'intentScore';
+let sortDir = -1;
+let selectedId = null;
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+function init() {
+  populateIndustryFilter();
+  applyFilters();
+}
+
+function populateIndustryFilter() {
+  const sel = document.getElementById('filterIndustry');
+  const industries = [...new Set(rawData.map(d => d.industry))].sort();
+  industries.forEach(ind => {
+    const opt = document.createElement('option');
+    opt.value = ind; opt.textContent = ind;
+    sel.appendChild(opt);
+  });
+}
+
+// ─── FILTERS ─────────────────────────────────────────────────────────────────
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const intent = document.getElementById('filterIntent').value;
+  const industry = document.getElementById('filterIndustry').value;
+  const size = document.getElementById('filterSize').value;
+  const page = document.getElementById('filterPage').value;
+  const returning = document.getElementById('filterReturning').value;
+
+  filtered = rawData.filter(d => {
+    if (q && !d.company.toLowerCase().includes(q) && !d.domain.toLowerCase().includes(q) && !d.industry.toLowerCase().includes(q) && !d.hq.toLowerCase().includes(q)) return false;
+    if (intent === 'hot' && d.intentScore < 75) return false;
+    if (intent === 'warm' && (d.intentScore < 40 || d.intentScore >= 75)) return false;
+    if (intent === 'cold' && d.intentScore >= 40) return false;
+    if (industry && d.industry !== industry) return false;
+    if (size && d.size !== size) return false;
+    if (page && !d.keyPages.some(p => p.includes(page))) return false;
+    if (returning === 'yes' && !d.returning) return false;
+    if (returning === 'no' && d.returning) return false;
+    return true;
+  });
+
+  sortData();
+  renderStats();
+  renderTable();
+}
+
+function resetFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterIntent').value = '';
+  document.getElementById('filterIndustry').value = '';
+  document.getElementById('filterSize').value = '';
+  document.getElementById('filterPage').value = '';
+  document.getElementById('filterReturning').value = '';
+  applyFilters();
+}
+
+// ─── SORT ─────────────────────────────────────────────────────────────────────
+function sortTable(key) {
+  if (sortKey === key) sortDir *= -1;
+  else { sortKey = key; sortDir = -1; }
+  sortData();
+  renderTable();
+}
+
+function sortData() {
+  filtered.sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (typeof av === 'string') return av.localeCompare(bv) * sortDir;
+    return (av - bv) * sortDir;
+  });
+}
+
+// ─── RENDER STATS ─────────────────────────────────────────────────────────────
+function renderStats() {
+  const hot = filtered.filter(d => d.intentScore >= 75).length;
+  const avg = filtered.length ? Math.round(filtered.reduce((a,d) => a+d.intentScore, 0)/filtered.length) : 0;
+  const withDemo = filtered.filter(d => d.keyPages.some(p => p.includes('Demo'))).length;
+  const withPricing = filtered.filter(d => d.keyPages.some(p => p.includes('Pricing'))).length;
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Accounts</div><div class="stat-value stat-accent">${filtered.length}</div><div class="stat-sub">of ${rawData.length} total visitors</div></div>
+    <div class="stat-card"><div class="stat-label">🔥 Hot Accounts</div><div class="stat-value stat-red">${hot}</div><div class="stat-sub">Intent score 75+</div></div>
+    <div class="stat-card"><div class="stat-label">Avg Intent Score</div><div class="stat-value stat-accent">${avg}</div><div class="stat-sub">Across filtered set</div></div>
+    <div class="stat-card"><div class="stat-label">Demo Requests</div><div class="stat-value stat-green">${withDemo}</div><div class="stat-sub">Hit demo page</div></div>
+    <div class="stat-card"><div class="stat-label">Pricing Visitors</div><div class="stat-value">${withPricing}</div><div class="stat-sub">Viewed pricing</div></div>
+  `;
+}
+
+// ─── RENDER TABLE ─────────────────────────────────────────────────────────────
+function getIntentPill(score) {
+  if (score >= 75) return `<span class="pill pill-hot">🔥 ${score}</span>`;
+  if (score >= 40) return `<span class="pill pill-warm">⚡ ${score}</span>`;
+  return `<span class="pill pill-cold">❄️ ${score}</span>`;
+}
+
+function getColor(name) {
+  let h = 0; for (let c of name) h = (h*31 + c.charCodeAt(0)) % COLORS.length;
+  return COLORS[h];
+}
+
+function getInitials(name) { return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+
+function formatDate(d) {
+  const dt = new Date(d); return dt.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  document.getElementById('tableCount').textContent = `${filtered.length} account${filtered.length !== 1 ? 's' : ''}`;
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="icon">🔍</div><p>No accounts match your filters.</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(d => {
+    const color = getColor(d.company);
+    const initials = getInitials(d.company);
+    const signals = [];
+    if (d.keyPages.some(p => p.includes('Demo'))) signals.push('<span class="pill pill-hot">Demo</span>');
+    if (d.keyPages.some(p => p.includes('Pricing'))) signals.push('<span class="pill pill-warm">Pricing</span>');
+    if (d.keyPages.some(p => p.includes('Case Study'))) signals.push('<span class="pill pill-green">Case Study</span>');
+    if (d.returning) signals.push('<span class="pill pill-gray">Returning</span>');
+
+    return `<tr class="data-row${selectedId===d.id?' selected':''}" onclick="selectRow(${d.id})">
+      <td>
+        <div class="company-cell">
+          <div class="company-logo" style="background:${color}">${initials}</div>
+          <div><div class="company-name">${d.company}</div><div class="company-domain">${d.domain}</div></div>
+        </div>
+      </td>
+      <td><span class="pill pill-industry">${d.industry}</span></td>
+      <td><span class="pill pill-gray">${d.size}</span></td>
+      <td style="font-family:'DM Mono',monospace;font-weight:600">${d.sessions}</td>
+      <td style="font-family:'DM Mono',monospace;font-weight:600">${d.pageViews}</td>
+      <td style="color:var(--text2)">${formatDate(d.lastSeen)}</td>
+      <td>
+        <div class="intent-wrap">
+          <div class="intent-bar-bg"><div class="intent-bar-fill" style="width:${d.intentScore}%;background:${d.intentScore>=75?'var(--red)':d.intentScore>=40?'var(--yellow)':'var(--accent)'}"></div></div>
+          ${getIntentPill(d.intentScore)}
+        </div>
+      </td>
+      <td><div style="display:flex;flex-wrap:wrap;gap:4px">${signals.slice(0,3).join('')}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── DETAIL PANEL ─────────────────────────────────────────────────────────────
+function selectRow(id) {
+  selectedId = id;
+  renderTable();
+  const d = rawData.find(r => r.id === id);
+  if (!d) return;
+  const color = getColor(d.company);
+  const initials = getInitials(d.company);
+
+  const competitorInsight = d.currentTech.length
+    ? `<div class="insight-item"><div class="insight-icon">🔄</div><div class="insight-text">Currently using <strong>${d.currentTech.join(', ')}</strong> — research displacement angles before outreach.</div></div>`
+    : '';
+
+  const demoSignal = d.keyPages.some(p=>p.includes('Demo'))
+    ? `<div class="insight-item"><div class="insight-icon">🚀</div><div class="insight-text"><strong>Demo page visited</strong> — high urgency signal. Prioritize outreach within 24–48 hours.</div></div>`
+    : '';
+
+  const pricingSignal = d.keyPages.some(p=>p.includes('Pricing'))
+    ? `<div class="insight-item"><div class="insight-icon">💰</div><div class="insight-text"><strong>Pricing page visited</strong> — prospect is evaluating cost. Prepare ROI framing and competitive pricing context.</div></div>`
+    : '';
+
+  const returningSignal = d.returning
+    ? `<div class="insight-item"><div class="insight-icon">🔁</div><div class="insight-text"><strong>Returning visitor</strong> — sustained interest over multiple sessions. Move toward direct engagement.</div></div>`
+    : `<div class="insight-item"><div class="insight-icon">🆕</div><div class="insight-text"><strong>First-time visitor</strong> — with ${d.sessions} sessions. Unusually high engagement for a new visitor.</div></div>`;
+
+  const contactsHtml = d.contacts.length
+    ? d.contacts.map(c => `
+        <div class="detail-kv" style="grid-column:span 2">
+          <div class="detail-kv-label">👤 ${c.title}</div>
+          <div class="detail-kv-val">${c.name}</div>
+          <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px">${c.email}</div>
+        </div>`).join('')
+    : `<div class="detail-kv" style="grid-column:span 2"><div class="detail-kv-label">Contacts</div><div class="detail-kv-val" style="color:var(--text3);font-weight:400">No contacts identified yet</div></div>`;
+
+  const pagesHtml = d.keyPages.map(p => `<span class="pill pill-gray" style="margin:2px 2px">${p}</span>`).join('');
+
+  const suggestedAction = d.intentScore >= 75
+    ? 'Prioritize immediate outreach. Use demo or pricing visit as the conversation opener. Reference industry-specific case study.'
+    : d.intentScore >= 40
+    ? 'Add to active nurture sequence. Schedule a soft-touch outreach referencing their area of interest.'
+    : 'Monitor for increased engagement. Add to awareness campaign. Not yet ready for direct sales outreach.';
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-company-row">
+        <div class="detail-logo" style="background:${color}">${initials}</div>
+        <div>
+          <div class="detail-company-name">${d.company}</div>
+          <div class="detail-domain">${d.domain}</div>
+        </div>
+      </div>
+      <div class="detail-tags">
+        <span class="pill pill-industry">${d.industry}</span>
+        <span class="pill pill-gray">${d.size}</span>
+        ${getIntentPill(d.intentScore)}
+        ${d.returning ? '<span class="pill pill-green">Returning</span>' : '<span class="pill pill-gray">First Visit</span>'}
+      </div>
+    </div>
+    <div class="detail-body">
+      <div>
+        <div class="detail-section-title">Company Profile</div>
+        <div class="detail-grid">
+          <div class="detail-kv"><div class="detail-kv-label">Employees</div><div class="detail-kv-val">${d.employees}</div></div>
+          <div class="detail-kv"><div class="detail-kv-label">Revenue</div><div class="detail-kv-val">${d.revenue}</div></div>
+          <div class="detail-kv" style="grid-column:span 2"><div class="detail-kv-label">HQ</div><div class="detail-kv-val">${d.hq}</div></div>
+          <div class="detail-kv" style="grid-column:span 2"><div class="detail-kv-label">Current Tech Stack</div><div class="detail-kv-val">${d.currentTech.join(' · ') || 'Unknown'}</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="detail-section-title">Visit Activity</div>
+        <div class="detail-grid">
+          <div class="detail-kv"><div class="detail-kv-label">Sessions</div><div class="detail-kv-val">${d.sessions}</div></div>
+          <div class="detail-kv"><div class="detail-kv-label">Page Views</div><div class="detail-kv-val">${d.pageViews}</div></div>
+          <div class="detail-kv"><div class="detail-kv-label">Last Seen</div><div class="detail-kv-val">${formatDate(d.lastSeen)}</div></div>
+          <div class="detail-kv"><div class="detail-kv-label">Intent Score</div><div class="detail-kv-val">${d.intentScore}/100</div></div>
+          <div class="detail-kv" style="grid-column:span 2"><div class="detail-kv-label">Key Pages</div><div style="margin-top:6px;display:flex;flex-wrap:wrap">${pagesHtml}</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="detail-section-title">Known Contacts</div>
+        <div class="detail-grid">${contactsHtml}</div>
+      </div>
+      <div>
+        <div class="detail-section-title">Sales Intelligence</div>
+        <div class="insight-list">
+          ${demoSignal}${pricingSignal}${returningSignal}${competitorInsight}
+          <div class="insight-item"><div class="insight-icon">💡</div><div class="insight-text">${d.notes}</div></div>
+        </div>
+      </div>
+      <div class="cta-box">
+        <div class="cta-title">Recommended Action</div>
+        <div class="cta-text">${suggestedAction}</div>
+        <button class="btn-cta">📋 Copy Outreach Brief</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('detailPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('active');
+
+  document.querySelector('.btn-cta').addEventListener('click', () => {
+    const brief = `eGain Visitor Brief — ${d.company}\n\nIndustry: ${d.industry} | Size: ${d.size} | HQ: ${d.hq}\nRevenue: ${d.revenue} | Employees: ${d.employees}\nCurrent Tech: ${d.currentTech.join(', ')}\n\nVisit Activity:\n- Sessions: ${d.sessions} | Page Views: ${d.pageViews} | Last Seen: ${formatDate(d.lastSeen)}\n- Key Pages: ${d.keyPages.join(', ')}\n- Intent Score: ${d.intentScore}/100\n\nKnown Contacts:\n${d.contacts.map(c => `- ${c.name}, ${c.title} (${c.email})`).join('\n') || 'None identified'}\n\nIntelligence Notes:\n${d.notes}\n\nRecommended Action:\n${suggestedAction}`;
+    navigator.clipboard.writeText(brief).then(() => {
+      const btn = document.querySelector('.btn-cta');
+      btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = '📋 Copy Outreach Brief', 2000);
+    });
+  });
+}
+
+function closePanel() {
+  document.getElementById('detailPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+  selectedId = null;
+  renderTable();
+}
+
+// ─── BOOT ─────────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
